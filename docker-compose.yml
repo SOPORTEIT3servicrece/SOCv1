@@ -29,8 +29,7 @@ services:
       - "--s3-secret-key"
       - "minioadmin"
       - "--s3-use-path-access-style"
-    #If you are familiar with the previous docker compose file you will note that the Cortex ports and keys have been omitted this is because we can now
-    #complete the integration from TheHive GUI directly.
+
     volumes:
       - thehivedata:/etc/thehive/application.conf
     networks:
@@ -79,7 +78,7 @@ services:
     networks:
       - SOC_NET
 
-#appended .local onto the container name because when we integrate cortex with TheHive using the new GUI menu it only accept a FQDN.
+
   cortex.local:
     image: thehiveproject/cortex:latest
     restart: unless-stopped
@@ -87,11 +86,7 @@ services:
       - job_directory=/tmp/cortex-jobs
       - docker_job_directory=/tmp/cortex-jobs
     volumes:
-      #For analyzers and responders (called neurons, also based on docker containers) to work, we need to bind the hosts docker socket into the cortex container
-      #so it can use the docker service of the host, and share the job directory between the container and the host.
-      #An alternative way of doing this would be to run docker (neurons) within the cortex docker container (docker-ception), the container will need to be run in 
-      #privileged mode and you will need the --start-docker parameter for this work. It is however not advised to run docker containers in priviliged mode because it
-      #grants the docker container root capabilities over the host system which is a security risk. 
+
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/cortex-jobs:/tmp/cortex-jobs
       - ./cortex/logs:/var/log/cortex
@@ -102,7 +97,7 @@ services:
       - "0.0.0.0:9001:9001"
     networks:
       - SOC_NET
-  #appended .local onto the container name because when we integrate MISP with TheHive using the new GUI menu it only accepts a FQDN.
+
   misp.local:
     image: coolacid/misp-docker:core-latest
     restart: unless-stopped
@@ -157,8 +152,7 @@ services:
       - misp_mysql
     networks:
       - SOC_NET
-  #removed the cortex volumes as we no longer require it, cortex will share the /tmp directory for jobs, the logs and application files will be stored in the cortex folder
-  #in the same directory on the host where the docker-compose.yml resides for ease of access. 
+
 volumes:
   miniodata:
   cassandradata:
